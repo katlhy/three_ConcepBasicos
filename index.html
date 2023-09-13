@@ -72,11 +72,30 @@
         scene.add(cono);
 
        //cilindro------
-       var cilindro = new THREE.Mesh(new THREE.CylinderGeometry(),/* (radio inferior,radio superior, altura, seg circulares, div horizontales,
+       var cilindro = new THREE.Mesh(new THREE.CylinderGeometry(1,2,2,8,2,true,0, Math.PI*3/4),/* (radio inferior,radio superior, altura, seg circulares, div horizontales,
                                                                  tapas (true/false),angulo inicio, angulo final)*/
       material);
         cilindro.position.y=-5;
         scene.add(cilindro);
+      //plano---------
+        var plano = new THREE.Mesh(new THREE.PlaneGeometry(3,2,3,2),/* (ancho, altura, seg circulares, seg horizontales,seg verticales)*/
+      material);
+        plano.position.y=5;
+        scene.add(plano);
+
+      //tetrahedron---------
+       var tetrahedro = new THREE.Mesh(new THREE.TetrahedronGeometry(1,2),/*(radio,numero de vertices)*/
+       material);
+        tetrahedro.position.y=5;
+        tetrahedro.position.x=5;
+        scene.add(tetrahedro);
+
+        //Esfera---------
+       var esfera = new THREE.Mesh(new THREE.SphereGeometry(1,10,5,0, Math.PI*2,0,Math.PI/2),/*(radio,seg horizt, seg vert,angulo inicial horiz, angulo final horiz, angulo inicia vert, angulo final verti)*/
+       material);
+        esfera.position.y=5;
+        esfera.position.x=-5;
+        scene.add(esfera);
 
       //----------------efectos con el mouse-------------------
       var controls = new OrbitControls(camera, renderer.domElement/*escuchar los ejemplentos del mouse*/);
