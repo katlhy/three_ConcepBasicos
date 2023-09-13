@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title> hola Cubo</title>
+  </head>
+  <body>
+
+  <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/110/three.js"></script>-->
+ 
+    <script type="module">
+      import * as THREE from "./three.module.js";
+      import { OrbitControls } from "./OrbitControls.js";
+
+
+      //creating scene----------------------
+      var scene = new THREE.Scene();
+       scene.background = new THREE.Color("skyblue");
+      // scene.background= new THREE.Color(0,0.4,0.7); colores entre 0 a 1
+        //scene.background= new THREE.Color("rgb (100,20,87)"); colores entre 0 a 255
+         //scene.background= new THREE.Color("red"); colores nombres segun el formato x11
+        //scene.fog = new THREE.Fog(0xff0000, 0.1, 8); //efectoNeblina
+
+       var loader = new THREE.TextureLoader();// para cargar la textura
+       loader.load("https://static.vecteezy.com/system/resources/thumbnails/009/377/583/original/square-rectangle-picture-border-with-neon-line-footage-effect-seamless-loop-4k-free-video.jpg", function (texture) {
+        scene.background = texture;
+      });
+
+//--------------add camera-----------
+      var camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,//referencia del tamaño del navegador
+        0.1,
+        2000
+      );
+//------------------camara auxialiares----------------------
+      var newcamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 3, 10);
+    //  var newcamera = new THREE.OrthographicCamera(5, -5, 5, -5, 3, 10);
+
+      var helper = new THREE.CameraHelper(newcamera);
+
+     scene.add(helper);
+
+//------------renderer--------------------------------------------
+      var renderer = new THREE.WebGLRenderer();
+      renderer.setSize(window.innerWidth, window.innerHeight);//ajustamos a la altura y ancho de nuestra pantalla
+      document.body.appendChild(renderer.domElement);//agregamos el renderer al html
+
+ //add ----------geometry--------------------------
+      //caja--------
+    var geometry = new THREE.BoxGeometry(2,3,3,2,3);//FORMA CAJA (ANCHO, ALTO, LARGO, DIV ANCHO, DIV ALTO)
+      var material = new THREE.MeshBasicMaterial({//TEXTURA
+        color: "deeppink",
+        wireframe: true,/*SOLO LINEAS*/
+      });
+      var cube = new THREE.Mesh(geometry, material);//genera el objeto
+    //cube.position.z = -5;
+        scene.add(cube);
+        camera.position.z = 10;
+
+      //circulo------
+      var circle = new THREE.Mesh(new THREE.CircleGeometry(2,12,0,Math.PI), /*(radio, cant segmentos, angunlo inicial, angulo final)*/
+      material);//genera el objeto
+        circle.position.x=5;
+        scene.add(circle);
+
+      //cono------
+      var cono = new THREE.Mesh(new THREE.ConeGeometry(1,3,12,2,true,0,Math.PI),/* (radio, altura, seg circulares, div horizontales, base (true/false), angulo inicio, angulo final)*/
+      material);
+        cono.position.x=-5;
+        scene.add(cono);
+
+       //cilindro------
+       var cilindro = new THREE.Mesh(new THREE.CylinderGeometry(),/* (radio inferior,radio superior, altura, seg circulares, div horizontales,
+                                                                 tapas (true/false),angulo inicio, angulo final)*/
+      material);
+        cilindro.position.y=-5;
+        scene.add(cilindro);
+
+      //----------------efectos con el mouse-------------------
+      var controls = new OrbitControls(camera, renderer.domElement/*escuchar los ejemplentos del mouse*/);
+         //----zomm
+          controls.minDistance=3;//minima distancia para hacer zomm
+          controls.maxDistance=10;//axima distancia para hacer zomm
+          controls.enableZoom = true;//habilitar o deshabilitar el zoom
+          
+
+          //-----rotacion
+            controls.enableRotate=true;//habilitar o desahabilitar rotacion de la camara
+           //controls.autoRotateSpeed=-Math.PI/90;//velocidad de rotacion automatica  
+            controls.maxPolarAngle = Math.PI/1.5;//limitar el angulo de rotacion de la camara
+
+
+           //----limitar o acelerar la velocidad de la camara
+           controls.enableDamping=true;
+           controls.dampingFactor=0.1;
+
+          //----- panning (click derecho mover el espacio)
+          controls.screenSpacePanning = true; //mover el espacio en todas la direciones
+
+
+     
+    // -------redimensionar la pantalla de forma automatica-------
+         window.addEventListener("resize"/*nombre del evento*/, redimensionar/*ejecuta una funcion*/);
+  
+            function redimensionar(){
+                camera.aspect = window.innerWidth/window.innerHeight;
+                camera.updateProjectionMatrix();//actualiza ma matrix de proyeccion de la camara
+                renderer.setSize(window.innerWidth, window.innerHeight);
+
+                renderer.render(scene, camera);
+             }
+
+ //-------------------animation------------------------------
+    var i = 0;
+    var animate = function () {
+        requestAnimationFrame(animate);//repite la animacion
+
+ //     camera.lookAt(newcamera.position);//que nuestra camara se enoque en nuestra camara auxiliar
+
+ //      camera.position.x = Math.cos(i) * 30;//rotacion de la camara respecto al eje x
+ //      camera.position.z = Math.sin(i) * 30;//rotacion de la camara respecto al eje y
+
+   //    i += 0.01;
+
+            scene.traverse(function (object) {// realizar operaciones en todos los objetos contenidos en una escena
+              if (object.isMesh === true){//Esfecifica que sean figuras
+              object.rotation.x += 0.01;
+              object.rotation.y += 0.01;
+
+              }
+            }) ;
+  //      cube.rotation.x += 0.01;
+  //      cube.rotation.y += 0.01;
+
+        renderer.render(scene, camera);//agregamos la escena y la camara
+      };
+
+      animate();
+    </script>
+  </body>
+</html>
